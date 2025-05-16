@@ -2,10 +2,10 @@
 export default function PrivacyPolicy() {
     return (
         <div className="bg-white min-h-screen browser-default">
-            <h1 className="bg-[#009FD6]   text-white px-4 md:px-20 py-4 md:py-8 text-2xl md:text-4xl shadow text-center md:text-start">Privacy Policy and Customer Data Protection</h1>
+            <h1 className="bg-[#009FD6] shadow  text-center md:text-start  text-white px-4 md:px-20 py-4 md:py-8 text-2xl md:text-4xl shadow text-center md:text-start">Privacy Policy and Customer Data Protection</h1>
             <div className="w-[90%] md:w-3/4 mx-auto my-8 rounded-bl-full space-y-5">
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl">Privacy Policy</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Privacy Policy</h1>
                     <div className="flex flex-col justify-content gap-2">
                         <p className="">Lion International Bank S.C. has developed the Anbesa DBS Personal app as a free app, offering it at no cost for users to utilize as is.
                         </p>
@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
                 </div>
 
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl">Information Collection and Use:</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Information Collection and Use:</h1>
 
                     <div className="flex flex-col justify-content gap-2"><p>To enhance your experience while using our service, we may request certain personally identifiable information. This may include, but is not limited to, contact details, phone numbers, names, gender, age, images, and contact lists. Additionally, we may collect postal or residential addresses,
                         email addresses, identification documents (such as identity cards or passports), personal photographs, date and place of birth, references to friends or
@@ -35,8 +35,8 @@ export default function PrivacyPolicy() {
                 </div>
 
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl underline underline-offset-2">Google Play Services</h1>
-                    <h1 className="font-bold text-2xl md:text-3xl">Log Data</h1>
+                    <h1 className="font-bold text-xl md:text-2xl underline underline-offset-2">Google Play Services</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Log Data</h1>
 
                     <div className="flex flex-col justify-content gap-2"><p>To enhance your experience while using our service, we may request certain personally identifiable information. This may include, but is not limited to, contact details, phone numbers, names, gender, age, images, and contact lists. Additionally, we may collect postal or residential addresses,
                         email addresses, identification documents (such as identity cards or passports), personal photographs, date and place of birth, references to friends or
@@ -44,7 +44,7 @@ export default function PrivacyPolicy() {
                         <p>The information you provide will be securely
                             stored and processed in accordance with the terms outlined in this privacy statement. Please note that the application may utilize third-party services that collect data which could be used for identification purposes. For further details, refer to the privacy policies of the third-party service providers integrated within the app.</p>
                     </div>
-                    <h1 className="font-bold text-2xl md:text-3xl">Cookies</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Cookies</h1>
 
                     <div className="flex flex-col justify-content "><p>Cookies are files with small amount of data that is commonly used an anonymous unique identifier. These are sent to your browser from the website that you visit and are stored on your device internal memory.</p>
                         <p>This Service does not use these “cookies” explicitly. However, the app may use third party code and libraries that use “cookies” to collection information and to improve their services. You have the option to either accept or refuse these cookies and know when a cookie is being sent to your device. If you choose to refuse our cookies, you may not be able to use some portions of this Service.</p>
@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
 
                 </div>
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl">Security</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Security</h1>
 
                     <p>We value your trust in providing us your Personal Information,
                         thus we are striving to use commercially acceptable means
@@ -83,7 +83,7 @@ export default function PrivacyPolicy() {
 
                 </div>
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl">Links to Other Sites</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Links to Other Sites</h1>
 
                     <p>This Service may contain links to other sites. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by us. Therefore, we strongly advise you to review the Privacy Policy of these websites. We have no control over and assume no responsibility
                         for the content, privacy policies, or practices of
@@ -91,7 +91,7 @@ export default function PrivacyPolicy() {
 
                 </div>
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl">Children's Privacy</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Children's Privacy</h1>
 
                     <p>These Services do not address anyone under
                         the age of 13. We do not knowingly collect personally
@@ -103,14 +103,14 @@ export default function PrivacyPolicy() {
 
                 </div>
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl">Change to This Privacy Policy</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Change to This Privacy Policy</h1>
 
                     <p>We may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Privacy Policy on this page.
                         These changes are effective immediately after they are posted on this page.</p>
 
                 </div>
                 <div className="space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl">Contact Us</h1>
+                    <h1 className="font-bold text-xl md:text-2xl">Contact Us</h1>
 
                     <p>We may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Privacy Policy on this page.
                         These changes are effective immediately after they are posted on this page.</p>
@@ -141,7 +141,7 @@ export default function PrivacyPolicy() {
                             <h1>SWIFT Code:</h1>
                             <p>LIBSETAA</p>
                         </div></li>
-                        <li className="relative pl-4 before:content-['•'] before:absolute before:left-0 before:text-black"><div className="flex gap-4 items-center font-semibold">
+                        <li className="relative pl-4 before:content-['•'] before:absolute before:left-0 before:text-black"><div className="flex gap-4 zitems-center font-semibold">
                             <h1>Address:</h1>
                             <p>Haile G.Selassie Avenue, Lex Plaza Building Addis Ababa, Ethiopia</p>
                         </div></li>
