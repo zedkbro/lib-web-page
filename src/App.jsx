@@ -12,7 +12,6 @@ function Home() {
     </div>
   );
 }
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -40,8 +39,6 @@ export default function App() {
         <Route path="/exchange-rates" element={<ForeignExchange />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
-
-     
     </BrowserRouter>
   );
 }

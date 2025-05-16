@@ -321,21 +321,22 @@ export default function ForeignExchange(){
 
       {/* Conversion Result */}
       {isConverted && (
-        <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto">
+        <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto py-8">
           <div className="text-center text-gray-700 text-xl font-medium flex flex-col ">
-            <button
-              className="self-end text-white mr-4 cursor-pointer"
-              onClick={handleClear}
-            >
-              <span className="icon ">&#10060;</span>
-            </button>
+            
             <div className="text-2xl md:text-3xl">
-              <span className="text-white">
+              <span className="text">
                 {amount} {fromCurrency} ={" "}
               </span>
               <span className="text-[#009FD6] font-bold">
                 {convertedAmount} {toCurrency}
               </span>
+              <button
+              className="self-end text-white  text-sm align-middle cursor-pointer"
+              onClick={handleClear}
+            >
+              <span className="icon ">&#10060;</span>
+            </button>
             </div>
           </div>
         </div>

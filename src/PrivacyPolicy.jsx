@@ -148,6 +148,9 @@ export default function PrivacyPolicy() {
                     </ul>
                 </div>
 
+                <ul className="list-disc"><li>One</li>
+                    <li>Two</li>
+                    <li>Three</li></ul>
             </div>
         </div>
     )
