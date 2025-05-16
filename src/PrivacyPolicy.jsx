@@ -2,7 +2,7 @@
 export default function PrivacyPolicy() {
     return (
         <div className="bg-white min-h-screen browser-default">
-            <h1 className="bg-[#009FD6] shadow  text-center md:text-start  text-white px-4 md:px-20 py-4 md:py-8 text-2xl md:text-4xl shadow text-center md:text-start">Privacy Policy and Customer Data Protection</h1>
+            <h1 className="bg-[#009FD6] shadow  text-center md:text-start  text-white px-4 md:px-20 py-4 md:py-6 text-2xl md:text-4xl shadow text-center md:text-start">Privacy Policy and Customer Data Protection</h1>
             <div className="w-[90%] md:w-3/4 mx-auto my-8 rounded-bl-full space-y-5">
                 <div className="space-y-4">
                     <h1 className="font-bold text-xl md:text-2xl">Privacy Policy</h1>
@@ -148,9 +148,6 @@ export default function PrivacyPolicy() {
                     </ul>
                 </div>
 
-                <ul className="list-disc"><li>One</li>
-                    <li>Two</li>
-                    <li>Three</li></ul>
             </div>
         </div>
     )

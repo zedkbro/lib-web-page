@@ -149,9 +149,9 @@ export default function ForeignExchange(){
     );
   }
   return (
-    <div className=" min-h-screen w-full space-y-12">
+    <div className=" min-h-screen bg- w-full space-y-8"  >
       {/* Header */}
-      <div className="w-full flex flex-col bg-[#009FD6] px-4 md:px-20 py-4 md:py-8 items-center justify-center">
+      <div className="w-full flex flex-col bg-[#009FD6]  px-8 text-center py-4 md:py-6  items-center justify-center">
         {/* <img
           src={logo}
           alt="Logo"
@@ -159,26 +159,26 @@ export default function ForeignExchange(){
         /> */}
         <h1 className="text-2xl md:text-3xl font-extrabold leading-tight">
           Currency <span className="text-white">Exchange</span> Rates{" "}
-          <span className="text-[#009FD6] ml-3 text-lg md:text-xl font-semibold align-middle text-white">
+          <span className="text-[#009FD6] ml-3 text-lg md:text-xl font-semibold align-middle text-white/90">
             {date}
           </span>
         </h1>
       </div>
       {/* Exchange Rate Table */}
-      <div className="w-full overflow-x-auto">
+      <div className="w-full p-0 ">
         
-        <table className="w-full md:w-[85%] lg:md:w-3/4 mx-auto bg-white border rounded-xl overflow-hidden shadow-sm">
+        <table className="w-full p-0 md:w-[85%] lg:md:w-3/4 mx-auto bg-white border rounded-xl overflow-hidden shadow-sm">
           <thead className="bg-[#009FD6]/10 font-extrabold text-left">
             <tr>
-              <th className="px-4 py-6 ">Currency</th>
-              <th className="px-4 py-6">Buying in ETB</th>
-              <th className="px-4 py-6">Selling in ETB</th>
+              <th className="p-3 font-bold ">Currency</th>
+              <th className="p-3 font-bold">Buying in ETB</th>
+              <th className="p-3 font-bold">Selling in ETB</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {fx_rates.map((rate, i) => (
               <tr key={i} className="hover:bg-[#f9f9f9]">
-                <td className="p-4 font-bold text-gray-900">
+                <td className="px-4 py-2 font-semibold text-gray-900">
                   {rate.currencyCode}
                   <div className="text-szm text-gray-500">
                     {rate.currencyCode === "USD"
@@ -190,8 +190,8 @@ export default function ForeignExchange(){
                       : ""}
                   </div>
                 </td>
-                <td className="p-4 text-gray-900">{rate.buyingPrice}</td>
-                <td className="p-4 text-gray-900">{rate.sellingPrice}</td>
+                <td className="p-4 ">{rate.buyingPrice}</td>
+                <td className="p-4 ">{rate.sellingPrice}</td>
               </tr>
             ))}
           </tbody>
@@ -199,7 +199,7 @@ export default function ForeignExchange(){
       </div>
 
       {/* Conversion Form */}
-      <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto bg-white flex md:flex-row gap-4 items-center px-6 py-4 border rounded-xl shadow-sm justify-between flex-wrap">
+      <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto bg-white flex md:flex-row gap-4 items-center px-6 py-2 border rounded-xl shadow-sm justify-between flex-wrap">
         {/* From */}
 
         {/* Buying */}
@@ -287,7 +287,7 @@ export default function ForeignExchange(){
             placeholder="Amount"
             value={amount}
             onChange={handleAmountChange}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            className="w-full border border-gray-400 rounded-lg px-4 py-2"
           />
         </div>
 
@@ -321,7 +321,7 @@ export default function ForeignExchange(){
 
       {/* Conversion Result */}
       {isConverted && (
-        <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto py-8">
+        <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto ">
           <div className="text-center text-gray-700 text-xl font-medium flex flex-col ">
             
             <div className="text-2xl md:text-3xl">
@@ -332,10 +332,10 @@ export default function ForeignExchange(){
                 {convertedAmount} {toCurrency}
               </span>
               <button
-              className="self-end text-white  text-sm align-middle cursor-pointer"
+              className="self-end text-white ml-4   text-sm align-middle cursor-pointer"
               onClick={handleClear}
             >
-              <span className="icon ">&#10060;</span>
+              <span className="icon text-gray-600">&#10060;</span>
             </button>
             </div>
           </div>

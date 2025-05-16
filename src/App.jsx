@@ -15,29 +15,11 @@ function Home() {
 export default function App() {
   return (
     <BrowserRouter>
-     <nav className="flex justify-center gap-4 p-4 bg-gray-100">
-        {[
-          { to: "/", label: "Home" },
-          { to: "/exchange-rates", label: "Exchange Rates" },
-          { to: "/privacy-policy", label: "Privacy Policy" },
-        ].map(({ to, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `px-4 py-2 ${
-                isActive ? "text-[#009FD6]" : "hover:text-[#009FD6]"
-              }`
-            }
-          >
-            {label}
-          </NavLink>
-        ))}
-      </nav>
+   
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/exchange-rates" element={<ForeignExchange />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/app-privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   );
