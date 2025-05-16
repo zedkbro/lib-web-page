@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logo from "./image/logo.jpeg";
-export default function ForeignExchange(){
+export default function ForeignExchange() {
   const [fx_rates, setExchangeRates] = useState([]);
   const [fromCurrency, setFromCurrency] = useState("");
   const [toCurrency, setToCurrency] = useState("ETB");
@@ -25,7 +25,7 @@ export default function ForeignExchange(){
       if (parsedData.length > 0) {
         setExchangeRates(parsedData);
         setError("");
-      } 
+      }
     } catch (error) {
       setError(error.message);
     }
@@ -40,7 +40,6 @@ export default function ForeignExchange(){
         day: "numeric",
       })
     );
-
     fetchData();
   }, []);
   // Recalculate when amount or currency changes
@@ -86,7 +85,6 @@ export default function ForeignExchange(){
   const handleAmountChange = (e) => {
     setAmount(e.target.value);
   };
-
   const handleClear = () => {
     setAmount("");
     setFromCurrency("");
@@ -95,12 +93,10 @@ export default function ForeignExchange(){
     setConvertedAmount(null);
     setIsConverted(false);
   };
-
   const handleFromToToggle = (e) => {
     e.preventDefault();
     setAmount("");
     setCurrentConversion(currentConversion === "Buying" ? "Selling" : "Buying");
-
     if (currentConversion === "Buying") {
       setFromCurrency("ETB");
       setToCurrency("");
@@ -129,7 +125,6 @@ export default function ForeignExchange(){
       }
     }
   };
-
   if (error) {
     return (
       <div className="w-full h-screen flex flex-col gap-8 items-center justify-center">
@@ -137,7 +132,6 @@ export default function ForeignExchange(){
         <p className="">
           Exchange Rates <span className="text-[#009FD6]">{date}</span>
         </p>
-
         <h1 className="text-red-500">{error}</h1>
         <button
           onClick={fetchData}
@@ -149,7 +143,7 @@ export default function ForeignExchange(){
     );
   }
   return (
-    <div className=" min-h-screen bg- w-full space-y-8"  >
+    <div className=" min-h-screen w-full space-y-8"  >
       {/* Header */}
       <div className="w-full flex flex-col bg-[#009FD6]  px-8 text-center py-4 md:py-6  items-center justify-center">
         {/* <img
@@ -165,8 +159,7 @@ export default function ForeignExchange(){
         </h1>
       </div>
       {/* Exchange Rate Table */}
-      <div className="w-full p-0 ">
-        
+      <div className="w-full  px-[2px] md:px-0">
         <table className="w-full p-0 md:w-[85%] lg:md:w-3/4 mx-auto bg-white border rounded-xl overflow-hidden shadow-sm">
           <thead className="bg-[#009FD6]/10 font-extrabold text-left">
             <tr>
@@ -184,10 +177,10 @@ export default function ForeignExchange(){
                     {rate.currencyCode === "USD"
                       ? "US Dollar"
                       : rate.currencyCode === "EUR"
-                      ? "Euro"
-                      : rate.currencyCode === "GBP"
-                      ? "British Pound"
-                      : ""}
+                        ? "Euro"
+                        : rate.currencyCode === "GBP"
+                          ? "British Pound"
+                          : ""}
                   </div>
                 </td>
                 <td className="p-4 ">{rate.buyingPrice}</td>
@@ -199,12 +192,12 @@ export default function ForeignExchange(){
       </div>
 
       {/* Conversion Form */}
-      <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto bg-white flex md:flex-row gap-4 items-center px-6 py-2 border rounded-xl shadow-sm justify-between flex-wrap">
+      <div className="w-full md:w-1/2 mx-auto bg-white flex md:flex-row gap-4 items-center px-6 py-2 border rounded-xl shadow-sm justify-between flex-wrap">
         {/* From */}
 
         {/* Buying */}
         {currentConversion === "Buying" ? (
-          <div className="w-full md:w-[40%] flex justify-between items-center relative">
+          <div className="w-full zmd:w-[40%] flex justify-between items-center relative">
             <div className="max-sm:w-[40%]">
               <h1 className="text-gray-700">From</h1>
               <select
@@ -291,7 +284,7 @@ export default function ForeignExchange(){
           />
         </div>
 
-        <button
+        {/* <button
           onClick={() => {
             if (amount && parseFloat(amount) > 0 && fromCurrency && price) {
               if (currentConversion === "Buying") {
@@ -309,21 +302,20 @@ export default function ForeignExchange(){
             !amount || parseFloat(amount) <= 0 || !fromCurrency || !price
           }
           className={`w-full md:w-auto px-6 py-2 rounded-xl text-white 
-    ${
-      !amount || parseFloat(amount) <= 0 || !fromCurrency || !price
-        ? "bg-gray-400 cursor-not-allowed"
-        : "bg-[#009FD6] hover:bg-[#007FB3] cursor-pointer"
-    }`}
+    ${!amount || parseFloat(amount) <= 0 || !fromCurrency || !price
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#009FD6] hover:bg-[#007FB3] cursor-pointer"
+            }`}
         >
           Calculate
-        </button>
+        </button> */}
       </div>
 
       {/* Conversion Result */}
       {isConverted && (
         <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto ">
           <div className="text-center text-gray-700 text-xl font-medium flex flex-col ">
-            
+
             <div className="text-2xl md:text-3xl">
               <span className="text">
                 {amount} {fromCurrency} ={" "}
@@ -332,11 +324,11 @@ export default function ForeignExchange(){
                 {convertedAmount} {toCurrency}
               </span>
               <button
-              className="self-end text-white ml-4   text-sm align-middle cursor-pointer"
-              onClick={handleClear}
-            >
-              <span className="icon text-gray-600">&#10060;</span>
-            </button>
+                className="self-end text-white ml-4   text-sm align-middle cursor-pointer"
+                onClick={handleClear}
+              >
+                <span className="icon text-gray-600">&#10060;</span>
+              </button>
             </div>
           </div>
         </div>
@@ -345,5 +337,5 @@ export default function ForeignExchange(){
   );
 };
 
- 
+
 
