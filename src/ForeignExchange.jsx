@@ -192,99 +192,101 @@ export default function ForeignExchange() {
       </div>
 
       {/* Conversion Form */}
-      <div className="w-full md:w-1/2 mx-auto bg-white flex md:flex-row gap-4 items-center px-6 py-2 border rounded-xl shadow-sm justify-between flex-wrap">
-        {/* From */}
-
-        {/* Buying */}
-        {currentConversion === "Buying" ? (
-          <div className="w-full zmd:w-[40%] flex justify-between items-center relative">
-            <div className="max-sm:w-[40%]">
-              <h1 className="text-gray-700">From</h1>
-              <select
-                value={fromCurrency}
-                onChange={handleFromChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
-              >
-                <option value="" disabled>
-                  Select
-                </option>
-                {fx_rates.map((rate) => (
-                  <option key={rate.currencyCode} value={rate.currencyCode}>
-                    {rate.currencyCode}
+      <section>
+        <h1 className="w-full md:w-[85%] lg:w-[60%] mx-auto   mb-2 text-center font-bold bg-gradient-to-r 
+        from-black to-[#009FD6] bg-clip-text text-transparent">Calculate</h1>
+        <div className="w-full md:w-[85%] lg:w-[60%] mx-auto bg-white flex md:flex-row gap-4 items-center px-6 py-2 border rounded-xl shadow-sm justify-between flex-wrap">
+          {/* From */}
+          {/* Buying */}
+          {currentConversion === "Buying" ? (
+            <div className="w-full md:w-[60%] flex justify-between items-center relative">
+              <div className="max-sm:w-[40%]">
+                <h1 className="text-gray-700">From</h1>
+                <select
+                  value={fromCurrency}
+                  onChange={handleFromChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
+                >
+                  <option value="" disabled>
+                    Select
                   </option>
-                ))}
-              </select>
-            </div>
-            <button
-              className="border border-gray-300 rounded-full px-4 md:px-8 py-1 focus:bg-[#009FD6]/70 focus:text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[20%] sm:-translate-y-[30%] "
-              onClick={handleFromToToggle}
-            >
-              <span className="icon text-blue-500">&#8596;</span>
-            </button>
-            {/* To */}
-            <div className="max-sm:w-[40%]">
-              <h1 className="text-gray-700">To</h1>
-              <select
-                defaultValue="ETB"
-                // value={toCurrency}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
+                  {fx_rates.map((rate) => (
+                    <option key={rate.currencyCode} value={rate.currencyCode}>
+                      {rate.currencyCode}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                className="border border-gray-300 rounded-full px-4 md:px-8 py-1 focus:bg-[#009FD6]/70 focus:text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[20%] sm:-translate-y-[30%] "
+                onClick={handleFromToToggle}
               >
-                <option value="ETB">ETB</option>
-              </select>
+                <span className="icon text-blue-500">&#8596;</span>
+              </button>
+              {/* To */}
+              <div className="max-sm:w-[40%]">
+                <h1 className="text-gray-700">To</h1>
+                <select
+                  defaultValue="ETB"
+                  // value={toCurrency}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
+                >
+                  <option value="ETB">ETB</option>
+                </select>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="w-[40%] flex justify-between items-center relative">
-            <div className="max-sm:w-[40%]">
-              <h1 className="text-gray-500">From</h1>
-              <select
-                value={fromCurrency}
-                onChange={handleFromChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
+          ) : (
+            <div className="w-[40%] flex justify-between items-center relative">
+              <div className="max-sm:w-[40%]">
+                <h1 className="text-gray-500">From</h1>
+                <select
+                  value={fromCurrency}
+                  onChange={handleFromChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
+                >
+                  <option value="ETB">ETB</option>
+                </select>
+              </div>
+              <button
+                className="border border-gray-300 rounded-full px-4 md:px-8 py-1 focus:bg-[#009FD6]/70 focus:text-white absolute top-1/2 left-1/2 -translate-x-1/2 sm:-translate-y-[30%]"
+                onClick={handleFromToToggle}
               >
-                <option value="ETB">ETB</option>
-              </select>
-            </div>
-            <button
-              className="border border-gray-300 rounded-full px-4 md:px-8 py-1 focus:bg-[#009FD6]/70 focus:text-white absolute top-1/2 left-1/2 -translate-x-1/2 sm:-translate-y-[30%]"
-              onClick={handleFromToToggle}
-            >
-              <span className="icon text-blue-500">&#8596;</span>
-            </button>
-            {/* To */}
-            <div className="max-sm:w-[40%]">
-              <h1 className="text-gray-500">To</h1>
-              <select
-                value={toCurrency}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
-                onChange={handleToChange}
-              >
-                <option value="" disabled>
-                  Select
-                </option>
-                {fx_rates.map((rate) => (
-                  <option key={rate.currencyCode} value={rate.currencyCode}>
-                    {rate.currencyCode}
+                <span className="icon text-blue-500">&#8596;</span>
+              </button>
+              {/* To */}
+              <div className="max-sm:w-[40%]">
+                <h1 className="text-gray-500">To</h1>
+                <select
+                  value={toCurrency}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
+                  onChange={handleToChange}
+                >
+                  <option value="" disabled>
+                    Select
                   </option>
-                ))}
-              </select>
+                  {fx_rates.map((rate) => (
+                    <option key={rate.currencyCode} value={rate.currencyCode}>
+                      {rate.currencyCode}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
+          )}
+
+          {/* Amount */}
+          <div className="max-sm:w-full md:mt-4">
+            <input
+              type="number"
+              min="0"
+              placeholder="Amount"
+              value={amount}
+              onChange={handleAmountChange}
+              className="w-full border border-gray-400 rounded-lg px-4 py-2"
+            />
           </div>
-        )}
 
-        {/* Amount */}
-        <div className="max-sm:w-full">
-          <input
-            type="number"
-            min="0"
-            placeholder="Amount"
-            value={amount}
-            onChange={handleAmountChange}
-            className="w-full border border-gray-400 rounded-lg px-4 py-2"
-          />
-        </div>
-
-        {/* <button
+          {/* <button
           onClick={() => {
             if (amount && parseFloat(amount) > 0 && fromCurrency && price) {
               if (currentConversion === "Buying") {
@@ -309,8 +311,8 @@ export default function ForeignExchange() {
         >
           Calculate
         </button> */}
-      </div>
-
+        </div>
+      </section>
       {/* Conversion Result */}
       {isConverted && (
         <div className="w-full md:w-[85%] lg:md:w-3/4 mx-auto ">
