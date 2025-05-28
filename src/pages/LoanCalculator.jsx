@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import InputField from '../components/InputField';
 import SelectField from '../components/SelectField';
 import { useNavigate } from 'react-router-dom';
+import { openSchedulePDF } from '../utils/openSchedule'; // Assuming this is a utility function to open PDF
 
 const LoanCalculator = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const LoanCalculator = () => {
       default: return 1;
     }
   };
+
 
   const validateForm = () => {
     const errors = {};
@@ -308,16 +310,17 @@ const LoanCalculator = () => {
           <p>Each Payment: <span className="font-semibold">{result.perPayment} birr</span></p>
 
           {/* Amortization Schedule Table */}
-        {schedule.length > 0 && (
-  <div className="mt-4 flex justify-center">
-    <button
-      onClick={() => navigate('/amortization', { state: { schedule } })}
-      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-    >
-      View Full Amortization Schedule
-    </button>
-  </div>
-)}
+          {schedule.length > 0 && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => openSchedulePDF(schedule)}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                View Full Amortization Schedule
+              </button>
+
+            </div>
+          )}
         </div>
       )}
     </div>
