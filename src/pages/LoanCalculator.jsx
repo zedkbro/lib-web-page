@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import InputField from '../components/InputField';
 import SelectField from '../components/SelectField';
+import AmortizationSchedule from '../components/AmortizationSchedule';
 
 const LoanCalculator = () => {
   const [amount, setAmount] = useState('');
@@ -11,6 +12,7 @@ const LoanCalculator = () => {
   const [product, setProduct] = useState('');
   const [result, setResult] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const [schedule, setSchedule] = useState([]);
 
   const calculateDays = () => {
     const t = parseInt(term);
@@ -56,12 +58,40 @@ const LoanCalculator = () => {
     );
   };
 
+  const generateAmortizationSchedule = (principal, interestRate, days, payments) => {
+    const termInYears = days / 365;
+    const totalInterest = principal * (interestRate / 100) * termInYears;
+    const totalRepayment = principal + totalInterest;
+    const paymentAmount = totalRepayment / payments;
+    const interestPerPayment = totalInterest / payments;
+
+    let balance = principal;
+    const schedule = [];
+
+    for (let i = 1; i <= payments; i++) {
+      const interestPayment = interestPerPayment;
+      const principalPayment = paymentAmount - interestPayment;
+      balance -= principalPayment;
+
+      schedule.push({
+        paymentNumber: i,
+        paymentAmount: paymentAmount.toFixed(2),
+        principalPayment: principalPayment.toFixed(2),
+        interestPayment: interestPayment.toFixed(2),
+        remainingBalance: balance > 0 ? balance.toFixed(2) : '0.00',
+      });
+    }
+
+    return schedule;
+  };
+
   const handleCalculate = () => {
     const errors = validateForm();
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
       setResult(null);
+      setSchedule([]);
       return;
     }
 
@@ -80,6 +110,9 @@ const LoanCalculator = () => {
       payments,
       perPayment: perPayment.toFixed(2),
     });
+
+    const amortSchedule = generateAmortizationSchedule(principal, interestRate, days, payments);
+    setSchedule(amortSchedule);
   };
 
   const handleReset = () => {
@@ -91,6 +124,35 @@ const LoanCalculator = () => {
     setProduct('');
     setResult(null);
     setValidationErrors({});
+    setSchedule([]);
+  };
+
+  // Download CSV helper
+  const downloadCSV = () => {
+    if (schedule.length === 0) return;
+
+    const headers = ['Payment #', 'Payment Amount', 'Principal Payment', 'Interest Payment', 'Remaining Balance'];
+    const rows = schedule.map(item => [
+      item.paymentNumber,
+      item.paymentAmount,
+      item.principalPayment,
+      item.interestPayment,
+      item.remainingBalance,
+    ]);
+
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent += headers.join(',') + '\n';
+    rows.forEach(row => {
+      csvContent += row.join(',') + '\n';
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'amortization_schedule.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleSubmit = (e) => {
@@ -242,6 +304,12 @@ const LoanCalculator = () => {
           <p className="mb-1">Total Repayment: <span className="font-semibold">{result.totalRepayment} birr</span></p>
           <p className="mb-1">Number of Payments: <span className="font-semibold">{result.payments}</span></p>
           <p>Each Payment: <span className="font-semibold">{result.perPayment} birr</span></p>
+
+          {/* Amortization Schedule Table */}
+         {schedule.length > 0 && (
+  <AmortizationSchedule schedule={schedule} downloadCSV={downloadCSV} />
+)}
+
         </div>
       )}
     </div>
