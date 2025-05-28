@@ -1,29 +1,51 @@
 import jsPDF from 'jspdf';
-
-export const openSchedulePDF = (schedule) => {
-  if (!schedule || schedule.length === 0) return;
-
+import autoTable from 'jspdf-autotable';
+import { formatNumber } from './formatNumber';
+export function openSchedulePDF(schedule) {
   const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text('Amortization Schedule', 14, 22);
 
-  doc.setFontSize(18);
-  doc.text('Amortization Schedule', 14, 20);
+  const tableColumn = [
+    'Payment #',
+    'Payment Amount',
+    'Principal',
+    'Interest',
+    'Remaining Balance',
+  ];
 
-  const headers = ['Payment #', 'Payment Amount', 'Principal', 'Interest', 'Balance'];
-  let startY = 30;
+  const tableRows = schedule.map(row => [
+    row.paymentNumber,
+    formatNumber(row.paymentAmount),
+    formatNumber(row.principalPayment),
+    formatNumber(row.interestPayment),
+    formatNumber(row.remainingBalance),
+  ]);
 
-  headers.forEach((header, i) => {
-    doc.text(header, 14 + i * 40, startY);
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 30,
+    styles: {
+      lineColor: [0, 0, 0],
+      lineWidth: 0.1,
+      halign: 'right',
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [221, 235, 247],
+      textColor: [0, 51, 102],
+      halign: 'center',
+    },
+    alternateRowStyles: {
+      fillColor: [245, 245, 245],
+    },
   });
 
-  schedule.forEach((item, index) => {
-    const y = startY + 10 + index * 10;
-    doc.text(String(item.paymentNumber), 14, y);
-    doc.text(String(item.paymentAmount), 54, y);
-    doc.text(String(item.principalPayment), 94, y);
-    doc.text(String(item.interestPayment), 134, y);
-    doc.text(String(item.remainingBalance), 174, y);
-  });
+  // Download the PDF automatically
+  // doc.save('amortization_schedule.pdf');
 
-  // This opens the PDF in a new browser tab/window
-  doc.output('dataurlnewwindow');
-};
+  // open the PDF in a new tab
+  window.open(doc.output('bloburl'), '_blank');
+}
+
