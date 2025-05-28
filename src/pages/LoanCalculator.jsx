@@ -61,21 +61,43 @@ const LoanCalculator = () => {
       product
     );
   };
+  const generateAmortizationSchedule = (principal, annualInterestRate, totalPayments, repaymentFreq) => {
+    // Determine monthly interest rate based on repayment frequency
+    // We'll approximate the interest period rate from annual interest rate accordingly:
 
-  const generateAmortizationSchedule = (principal, interestRate, days, payments) => {
-    const termInYears = days / 365;
-    const totalInterest = principal * (interestRate / 100) * termInYears;
-    const totalRepayment = principal + totalInterest;
-    const paymentAmount = totalRepayment / payments;
-    const interestPerPayment = totalInterest / payments;
+    let periodInterestRate;
+    switch (repaymentFreq) {
+      case 'daily':
+        periodInterestRate = (annualInterestRate / 100) / 365;
+        break;
+      case 'weekly':
+        periodInterestRate = (annualInterestRate / 100) / 52;
+        break;
+      case 'monthly':
+        periodInterestRate = (annualInterestRate / 100) / 12;
+        break;
+      case 'yearly':
+        periodInterestRate = (annualInterestRate / 100);
+        break;
+      default:
+        periodInterestRate = (annualInterestRate / 100) / 12;
+    }
+
+    // Payment = P * r / (1 - (1 + r)^-n)
+    const paymentAmount = principal * periodInterestRate / (1 - Math.pow(1 + periodInterestRate, -totalPayments));
 
     let balance = principal;
     const schedule = [];
 
-    for (let i = 1; i <= payments; i++) {
-      const interestPayment = interestPerPayment;
+    for (let i = 1; i <= totalPayments; i++) {
+      const interestPayment = balance * periodInterestRate;
       const principalPayment = paymentAmount - interestPayment;
       balance -= principalPayment;
+
+      // Fix last payment rounding errors by forcing balance to 0 if very close
+      if (i === totalPayments && Math.abs(balance) < 0.01) {
+        balance = 0;
+      }
 
       schedule.push({
         paymentNumber: i,
@@ -88,6 +110,8 @@ const LoanCalculator = () => {
 
     return schedule;
   };
+
+
 
   const handleCalculate = () => {
     const errors = validateForm();
@@ -103,21 +127,28 @@ const LoanCalculator = () => {
     const interestRate = parseFloat(rate);
     const days = calculateDays();
 
+    const payments = calculateRepayments(days); // total number of payments depending on frequency and term
+
+    // Calculate total interest (not needed for amortization but useful to display)
     const interest = (principal * interestRate * days) / (100 * 365);
     const totalRepayment = principal + interest;
-    const payments = calculateRepayments(days);
-    const perPayment = totalRepayment / payments;
+
+    // Generate schedule with amortization logic
+    const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq);
+
+    // The per payment is fixed as per amortization formula
+    const perPayment = amortSchedule.length > 0 ? amortSchedule[0].paymentAmount : 0;
 
     setResult({
       interest: interest.toFixed(2),
       totalRepayment: totalRepayment.toFixed(2),
       payments,
-      perPayment: perPayment.toFixed(2),
+      perPayment,
     });
 
-    const amortSchedule = generateAmortizationSchedule(principal, interestRate, days, payments);
     setSchedule(amortSchedule);
   };
+
 
   const handleReset = () => {
     setAmount('');
@@ -171,7 +202,7 @@ const LoanCalculator = () => {
       </h2>
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <InputField
-          label="Loan Amount"
+          label="Loan Amount (Birr)"
           id="loan-amount"
           type="number"
           value={amount}
