@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import logo from "./image/logo.jpeg";
-import usa_flag from "./image/usa_flag.webp"
-import british_flag from "./image/british_flag.png"
-import euro_flag from "./image/euro_flag.png"
+import usa_flag from "./image/usa_flag.webp";
+import british_flag from "./image/british_flag.png";
+import euro_flag from "./image/euro_flag.png";
 export default function ForeignExchange() {
   const [fx_rates, setExchangeRates] = useState([]);
   const [fromCurrency, setFromCurrency] = useState("");
@@ -16,21 +16,24 @@ export default function ForeignExchange() {
   const [date, setDate] = useState("");
   //  fetch from API
   const fetchData = async () => {
+    const targetUrl = "https://api-in-uat.anbesabank.et/forex/2.0.0/rates";
+    const proxyUrl =
+      "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl);
+
     try {
-      // using proxy to bypass CORS issue
-      const targetUrl = "https://api-in-uat.anbesabank.et/forex/2.0.0/rates";
-      const proxyUrl =
-        "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl);
       const response = await fetch(proxyUrl);
-      const data = await response.json();
-      //  Try to parse the contents
-      const parsedData = JSON.parse(data.contents);
-      if (parsedData.length > 0) {
+      const data = await response.json(); // Parse the allOrigins response as JSON
+      const parsedData = JSON.parse(data.contents); // Parse the 'contents' field as JSON array
+
+      if (Array.isArray(parsedData) && parsedData.length > 0) {
         setExchangeRates(parsedData);
         setError("");
+      } else {
+        setError("No exchange rates found");
       }
     } catch (error) {
-      setError(error.message);
+      console.error("Error fetching exchange rates:", error);
+      setError("Failed to fetch exchange rates");
     }
   };
 
@@ -96,24 +99,25 @@ export default function ForeignExchange() {
     setConvertedAmount(null);
     setIsConverted(false);
   };
- 
-  const handleFromToToggle = (e) => {
-  e.preventDefault();
-  setAmount("");
-  const nextConversion = currentConversion === "Buying" ? "Selling" : "Buying";
-  setCurrentConversion(nextConversion);
 
-  if (nextConversion === "Buying") {
-    setFromCurrency("");
-    setToCurrency("ETB");
-  } else {
-    setFromCurrency("ETB");
-    setToCurrency(""); // important: reset to empty so user must choose
-  }
-  setRate(0); // clear previous rate
-  setConvertedAmount(null); // clear previous result
-  setIsConverted(false); // reset flag
-};
+  const handleFromToToggle = (e) => {
+    e.preventDefault();
+    setAmount("");
+    const nextConversion =
+      currentConversion === "Buying" ? "Selling" : "Buying";
+    setCurrentConversion(nextConversion);
+
+    if (nextConversion === "Buying") {
+      setFromCurrency("");
+      setToCurrency("ETB");
+    } else {
+      setFromCurrency("ETB");
+      setToCurrency(""); // important: reset to empty so user must choose
+    }
+    setRate(0); // clear previous rate
+    setConvertedAmount(null); // clear previous result
+    setIsConverted(false); // reset flag
+  };
 
   //   Handling selling price
   const handleToChange = (e) => {
@@ -143,7 +147,7 @@ export default function ForeignExchange() {
         </p>
         <h1 className="text-red-500">{error}</h1>
         <button
-          onClick={fetchData}
+          onClick={(e)=>{e.preventDefault(); fetchData();}}
           className=" border bg-white  px-4 py-1 rounded-md"
         >
           Retry
@@ -152,7 +156,7 @@ export default function ForeignExchange() {
     );
   }
   return (
-    <div className=" min-h-screen w-full space-y-8"  >
+    <div className=" min-h-screen w-full space-y-8">
       {/* Header */}
       <div className="w-full flex flex-col bg-[#009FD6]  px-8 text-center py-4 md:py-6  items-center justify-center">
         {/* <img
@@ -182,20 +186,30 @@ export default function ForeignExchange() {
               <tr key={i} className="hover:bg-[#f9f9f9]">
                 <td className=" py-2 flex font-semibold items-center gap-1 text-gray-900">
                   <div>
-                <img src={rate.currencyCode === "USD"? 
-                  usa_flag: rate.currencyCode === "GBP"? british_flag: euro_flag} alt="" className="size-8 rounded-full object-center object-cover " />
+                    <img
+                      src={
+                        rate.currencyCode === "USD"
+                          ? usa_flag
+                          : rate.currencyCode === "GBP"
+                          ? british_flag
+                          : euro_flag
+                      }
+                      alt=""
+                      className="size-8 rounded-full object-center object-cover "
+                    />
                   </div>
                   <div>
-                  <span className="font-semibold">{rate.currencyCode}</span>
-                  <div className="text-sm t text-gray-600">
-                    {rate.currencyCode === "USD"
-                      ? "US Dollar"
-                      : rate.currencyCode === "EUR"
+                    <span className="font-semibold">{rate.currencyCode}</span>
+                    <div className="text-sm t text-gray-600">
+                      {rate.currencyCode === "USD"
+                        ? "US Dollar"
+                        : rate.currencyCode === "EUR"
                         ? "Euro"
                         : rate.currencyCode === "GBP"
-                          ? "British Pound"
-                          : ""}
-                  </div></div>
+                        ? "British Pound"
+                        : ""}
+                    </div>
+                  </div>
                 </td>
                 <td className="p-4 ">{rate.buyingPrice}</td>
                 <td className="p-4 ">{rate.sellingPrice}</td>
@@ -207,8 +221,12 @@ export default function ForeignExchange() {
 
       {/* Conversion Form */}
       <section>
-        <h1 className="w-full md:w-[85%] lg:w-[60%] mx-auto   mb-2 text-center font-bold bg-gradient-to-r 
-        from-black to-[#009FD6] bg-clip-text text-transparent">Calculate</h1>
+        <h1
+          className="w-full md:w-[85%] lg:w-[60%] mx-auto   mb-2 text-center font-bold bg-gradient-to-r 
+        from-black to-[#009FD6] bg-clip-text text-transparent"
+        >
+          Calculate
+        </h1>
         <div className="w-full md:w-[85%] lg:w-[60%] mx-auto bg-white flex md:flex-row gap-4 items-center px-6 py-2 border rounded-xl shadow-sm justify-between flex-wrap">
           {/* From */}
           {/* Buying */}
@@ -227,9 +245,8 @@ export default function ForeignExchange() {
                   {fx_rates.map((rate) => (
                     <option key={rate.currencyCode} value={rate.currencyCode}>
                       {rate.currencyCode}
-                   </option>
+                    </option>
                   ))}
-                  
                 </select>
               </div>
               <button
@@ -242,8 +259,7 @@ export default function ForeignExchange() {
               <div className="max-sm:w-[40%]">
                 <h1 className="text-gray-700">To</h1>
                 <select
-                  defaultValue="ETB"
-                  value={toCurrency}
+                  defaultValue="ETB" 
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
                 >
                   <option value="ETB">ETB</option>
@@ -272,17 +288,19 @@ export default function ForeignExchange() {
               <div className="max-sm:w-[40%]">
                 <h1 className="text-gray-700">To</h1>
                 <select
-  value={toCurrency}
-  onChange={handleToChange}
-  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
->
-  <option value="" disabled>Select</option>
-  {fx_rates.map((rate) => (
-    <option key={rate.currencyCode} value={rate.currencyCode}>
-      {rate.currencyCode}
-    </option>
-  ))}
-</select> 
+                  value={toCurrency}
+                  onChange={handleToChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
+                >
+                  <option value="" disabled>
+                    Select
+                  </option>
+                  {fx_rates.map((rate) => (
+                    <option key={rate.currencyCode} value={rate.currencyCode}>
+                      {rate.currencyCode}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           )}
@@ -349,7 +367,4 @@ export default function ForeignExchange() {
       )}
     </div>
   );
-};
-
-
-
+}
