@@ -73,45 +73,69 @@ const LoanCalculator = () => {
     );
   };
 
-  const generateAmortizationSchedule = (principal, annualInterestRate, totalPayments, repaymentFreq) => {
+  const generateAmortizationSchedule = (
+    principal,
+    annualInterestRate,
+    totalPayments,
+    repaymentFreq,
+    startDate
+  ) => {
     let periodInterestRate;
+    let intervalDays;
     switch (repaymentFreq) {
       case 'daily':
         periodInterestRate = (annualInterestRate / 100) / 365;
+        intervalDays = 1;
         break;
       case 'weekly':
         periodInterestRate = (annualInterestRate / 100) / 52;
+        intervalDays = 7;
         break;
       case 'monthly':
         periodInterestRate = (annualInterestRate / 100) / 12;
+        intervalDays = 30;
         break;
       case 'yearly':
         periodInterestRate = (annualInterestRate / 100);
+        intervalDays = 365;
         break;
       default:
         periodInterestRate = (annualInterestRate / 100) / 12;
+        intervalDays = 30;
     }
 
     const paymentAmount = principal * periodInterestRate / (1 - Math.pow(1 + periodInterestRate, -totalPayments));
     let balance = principal;
     const schedule = [];
 
+    let currentDate = new Date(startDate);
+
     for (let i = 1; i <= totalPayments; i++) {
       const interestPayment = balance * periodInterestRate;
       const principalPayment = paymentAmount - interestPayment;
+      const beginningBalance = balance;
       balance -= principalPayment;
 
+      // Normalize last balance
       if (i === totalPayments && Math.abs(balance) < 0.01) {
         balance = 0;
       }
 
+      // Format date as yyyy-mm-dd
+      const payDate = currentDate.toISOString().split('T')[0];
+
       schedule.push({
         paymentNumber: i,
+        payDate,
+        beginningBalance: beginningBalance.toFixed(2),
         paymentAmount: paymentAmount.toFixed(2),
         principalPayment: principalPayment.toFixed(2),
         interestPayment: interestPayment.toFixed(2),
         remainingBalance: balance > 0 ? balance.toFixed(2) : '0.00',
       });
+
+      // Increment date
+      currentDate.setDate(currentDate.getDate() + intervalDays);
     }
 
     return schedule;
@@ -133,7 +157,9 @@ const LoanCalculator = () => {
     const payments = calculateRepayments(days);
     const interest = (principal * interestRate * days) / (100 * 365);
     const totalRepayment = principal + interest;
-    const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq);
+    // const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq);
+    const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq, startDate);
+
     const perPayment = amortSchedule.length > 0 ? amortSchedule[0].paymentAmount : 0;
     const endDate = calculateEndDate(startDate, term, termUnit);
 
@@ -160,33 +186,6 @@ const LoanCalculator = () => {
     setResult(null);
     setValidationErrors({});
     setSchedule([]);
-  };
-
-  const downloadCSV = () => {
-    if (schedule.length === 0) return;
-
-    const headers = ['Payment #', 'Payment Amount', 'Principal Payment', 'Interest Payment', 'Remaining Balance'];
-    const rows = schedule.map(item => [
-      item.paymentNumber,
-      item.paymentAmount,
-      item.principalPayment,
-      item.interestPayment,
-      item.remainingBalance,
-    ]);
-
-    let csvContent = 'data:text/csv;charset=utf-8,';
-    csvContent += headers.join(',') + '\n';
-    rows.forEach(row => {
-      csvContent += row.join(',') + '\n';
-    });
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'amortization_schedule.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   const handleSubmit = (e) => {

@@ -1,21 +1,28 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { formatNumber } from './formatNumber';
+
 export function openSchedulePDF(schedule) {
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text('Amortization Schedule', 14, 22);
 
+  // Updated headers to include Pay Date & Beginning Balance
   const tableColumn = [
     'Payment #',
-    'Payment Amount',
+    'Pay Date',
+    'Beginning Balance',
+    'Each Payment',
     'Principal',
     'Interest',
     'Remaining Balance',
   ];
 
+  // Map schedule rows including new fields
   const tableRows = schedule.map(row => [
     row.paymentNumber,
+    row.payDate, // ensure this exists in schedule objects
+    formatNumber(row.beginningBalance), // ensure this exists
     formatNumber(row.paymentAmount),
     formatNumber(row.principalPayment),
     formatNumber(row.interestPayment),
@@ -40,12 +47,12 @@ export function openSchedulePDF(schedule) {
     alternateRowStyles: {
       fillColor: [245, 245, 245],
     },
+    columnStyles: {
+      1: { halign: 'center' }, // Pay Date center align
+      0: { halign: 'center' }, // Payment # center align
+    },
   });
 
-  // Download the PDF automatically
-  // doc.save('amortization_schedule.pdf');
-
-  // open the PDF in a new tab
+  // Open PDF in a new tab
   window.open(doc.output('bloburl'), '_blank');
 }
-
