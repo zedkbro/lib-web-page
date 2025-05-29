@@ -3,6 +3,13 @@ import InputField from '../components/InputField';
 import SelectField from '../components/SelectField';
 import { useNavigate } from 'react-router-dom';
 import { openSchedulePDF } from '../utils/openSchedule';
+import {
+  calculateDays,
+  calculateRepayments,
+  calculateEndDate,
+  generateAmortizationSchedule,
+  validateInputs,
+} from '../utils/loanUtils';
 
 const LoanCalculator = () => {
   const navigate = useNavigate();
@@ -17,128 +24,14 @@ const LoanCalculator = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [schedule, setSchedule] = useState([]);
 
-  const calculateDays = () => {
-    const t = parseInt(term);
-    if (termUnit === 'days') return t;
-    if (termUnit === 'months') return t * 30;
-    if (termUnit === 'years') return t * 365;
-    return 0;
-  };
-
-  const calculateRepayments = (days) => {
-    switch (repaymentFreq) {
-      case 'daily': return days;
-      case 'weekly': return Math.ceil(days / 7);
-      case 'monthly': return Math.ceil(days / 30);
-      case 'yearly': return Math.ceil(days / 365);
-      default: return 1;
-    }
-  };
-
-  const calculateEndDate = (startDate, term, unit) => {
-    const date = new Date(startDate);
-    if (unit === 'days') date.setDate(date.getDate() + parseInt(term));
-    if (unit === 'months') date.setMonth(date.getMonth() + parseInt(term));
-    if (unit === 'years') date.setFullYear(date.getFullYear() + parseInt(term));
-    return date.toISOString().split('T')[0];
-  };
-
-  const validateForm = () => {
-    const errors = {};
-    if (!amount || parseFloat(amount) <= 0) {
-      errors.amount = 'Amount must be a positive number.';
-    }
-    if (!rate || parseFloat(rate) <= 0) {
-      errors.rate = 'Interest rate must be a positive number.';
-    }
-    if (!term || parseInt(term) <= 0) {
-      errors.term = 'Term must be a positive number.';
-    }
-    if (!startDate) {
-      errors.startDate = 'Start date is required.';
-    }
-    return errors;
-  };
-
-  const isFormValid = () => {
-    return (
-      amount && parseFloat(amount) > 0 &&
-      rate && parseFloat(rate) > 0 &&
-      term && parseInt(term) > 0 &&
-      startDate
-    );
-  };
-
-  const generateAmortizationSchedule = (
-    principal,
-    annualInterestRate,
-    totalPayments,
-    repaymentFreq,
-    startDate
-  ) => {
-    let periodInterestRate;
-    let intervalDays;
-    switch (repaymentFreq) {
-      case 'daily':
-        periodInterestRate = (annualInterestRate / 100) / 365;
-        intervalDays = 1;
-        break;
-      case 'weekly':
-        periodInterestRate = (annualInterestRate / 100) / 52;
-        intervalDays = 7;
-        break;
-      case 'monthly':
-        periodInterestRate = (annualInterestRate / 100) / 12;
-        intervalDays = 30;
-        break;
-      case 'yearly':
-        periodInterestRate = (annualInterestRate / 100);
-        intervalDays = 365;
-        break;
-      default:
-        periodInterestRate = (annualInterestRate / 100) / 12;
-        intervalDays = 30;
-    }
-
-    const paymentAmount = principal * periodInterestRate / (1 - Math.pow(1 + periodInterestRate, -totalPayments));
-    let balance = principal;
-    const schedule = [];
-
-    let currentDate = new Date(startDate);
-
-    for (let i = 1; i <= totalPayments; i++) {
-      const interestPayment = balance * periodInterestRate;
-      const principalPayment = paymentAmount - interestPayment;
-      const beginningBalance = balance;
-      balance -= principalPayment;
-
-      // Normalize last balance
-      if (i === totalPayments && Math.abs(balance) < 0.01) {
-        balance = 0;
-      }
-
-      // Format date as yyyy-mm-dd
-      const payDate = currentDate.toISOString().split('T')[0];
-
-      schedule.push({
-        paymentNumber: i,
-        payDate,
-        beginningBalance: beginningBalance.toFixed(2),
-        paymentAmount: paymentAmount.toFixed(2),
-        principalPayment: principalPayment.toFixed(2),
-        interestPayment: interestPayment.toFixed(2),
-        remainingBalance: balance > 0 ? balance.toFixed(2) : '0.00',
-      });
-
-      // Increment date
-      currentDate.setDate(currentDate.getDate() + intervalDays);
-    }
-
-    return schedule;
-  };
+  const isFormValid = () =>
+    amount && parseFloat(amount) > 0 &&
+    rate && parseFloat(rate) > 0 &&
+    term && parseInt(term, 10) > 0 &&
+    startDate;
 
   const handleCalculate = () => {
-    const errors = validateForm();
+    const errors = validateInputs({ amount, rate, term, startDate });
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
@@ -149,12 +42,14 @@ const LoanCalculator = () => {
 
     const principal = parseFloat(amount);
     const interestRate = parseFloat(rate);
-    const days = calculateDays();
-    const payments = calculateRepayments(days);
+    const days = calculateDays(term, termUnit);
+    const payments = calculateRepayments(days, repaymentFreq);
+
+    // Simple interest for total interest
     const interest = (principal * interestRate * days) / (100 * 365);
     const totalRepayment = principal + interest;
-    const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq, startDate);
 
+    const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq, startDate);
     const perPayment = amortSchedule.length > 0 ? amortSchedule[0].paymentAmount : 0;
     const endDate = calculateEndDate(startDate, term, termUnit);
 
