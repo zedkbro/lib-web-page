@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InputField from '../components/InputField';
 import SelectField from '../components/SelectField';
 import { useNavigate } from 'react-router-dom';
-import { openSchedulePDF } from '../utils/openSchedule'; // Assuming this is a utility function to open PDF
+import { openSchedulePDF } from '../utils/openSchedule';
 
 const LoanCalculator = () => {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ const LoanCalculator = () => {
   const [termUnit, setTermUnit] = useState('years');
   const [repaymentFreq, setRepaymentFreq] = useState('monthly');
   const [product, setProduct] = useState('');
+  const [startDate, setStartDate] = useState('');
   const [result, setResult] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [schedule, setSchedule] = useState([]);
@@ -35,6 +36,13 @@ const LoanCalculator = () => {
     }
   };
 
+  const calculateEndDate = (startDate, term, unit) => {
+    const date = new Date(startDate);
+    if (unit === 'days') date.setDate(date.getDate() + parseInt(term));
+    if (unit === 'months') date.setMonth(date.getMonth() + parseInt(term));
+    if (unit === 'years') date.setFullYear(date.getFullYear() + parseInt(term));
+    return date.toISOString().split('T')[0];
+  };
 
   const validateForm = () => {
     const errors = {};
@@ -50,6 +58,9 @@ const LoanCalculator = () => {
     if (!product) {
       errors.product = 'Please select a product.';
     }
+    if (!startDate) {
+      errors.startDate = 'Start date is required.';
+    }
     return errors;
   };
 
@@ -58,13 +69,11 @@ const LoanCalculator = () => {
       amount && parseFloat(amount) > 0 &&
       rate && parseFloat(rate) > 0 &&
       term && parseInt(term) > 0 &&
-      product
+      product && startDate
     );
   };
-  const generateAmortizationSchedule = (principal, annualInterestRate, totalPayments, repaymentFreq) => {
-    // Determine monthly interest rate based on repayment frequency
-    // We'll approximate the interest period rate from annual interest rate accordingly:
 
+  const generateAmortizationSchedule = (principal, annualInterestRate, totalPayments, repaymentFreq) => {
     let periodInterestRate;
     switch (repaymentFreq) {
       case 'daily':
@@ -83,9 +92,7 @@ const LoanCalculator = () => {
         periodInterestRate = (annualInterestRate / 100) / 12;
     }
 
-    // Payment = P * r / (1 - (1 + r)^-n)
     const paymentAmount = principal * periodInterestRate / (1 - Math.pow(1 + periodInterestRate, -totalPayments));
-
     let balance = principal;
     const schedule = [];
 
@@ -94,7 +101,6 @@ const LoanCalculator = () => {
       const principalPayment = paymentAmount - interestPayment;
       balance -= principalPayment;
 
-      // Fix last payment rounding errors by forcing balance to 0 if very close
       if (i === totalPayments && Math.abs(balance) < 0.01) {
         balance = 0;
       }
@@ -111,8 +117,6 @@ const LoanCalculator = () => {
     return schedule;
   };
 
-
-
   const handleCalculate = () => {
     const errors = validateForm();
     setValidationErrors(errors);
@@ -126,29 +130,24 @@ const LoanCalculator = () => {
     const principal = parseFloat(amount);
     const interestRate = parseFloat(rate);
     const days = calculateDays();
-
-    const payments = calculateRepayments(days); // total number of payments depending on frequency and term
-
-    // Calculate total interest (not needed for amortization but useful to display)
+    const payments = calculateRepayments(days);
     const interest = (principal * interestRate * days) / (100 * 365);
     const totalRepayment = principal + interest;
-
-    // Generate schedule with amortization logic
     const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq);
-
-    // The per payment is fixed as per amortization formula
     const perPayment = amortSchedule.length > 0 ? amortSchedule[0].paymentAmount : 0;
+    const endDate = calculateEndDate(startDate, term, termUnit);
 
     setResult({
       interest: interest.toFixed(2),
       totalRepayment: totalRepayment.toFixed(2),
       payments,
       perPayment,
+      startDate,
+      endDate,
     });
 
     setSchedule(amortSchedule);
   };
-
 
   const handleReset = () => {
     setAmount('');
@@ -157,12 +156,12 @@ const LoanCalculator = () => {
     setTermUnit('years');
     setRepaymentFreq('monthly');
     setProduct('');
+    setStartDate('');
     setResult(null);
     setValidationErrors({});
     setSchedule([]);
   };
 
-  // Download CSV helper
   const downloadCSV = () => {
     if (schedule.length === 0) return;
 
@@ -210,14 +209,8 @@ const LoanCalculator = () => {
           min="0"
           step="any"
           error={validationErrors.amount}
-          aria-describedby="amount-error"
           className="w-full"
         />
-        {validationErrors.amount && (
-          <p id="amount-error" className="text-red-600 text-sm mt-1">
-            {validationErrors.amount}
-          </p>
-        )}
 
         <InputField
           label="Interest Rate (%)"
@@ -228,14 +221,8 @@ const LoanCalculator = () => {
           min="0"
           step="any"
           error={validationErrors.rate}
-          aria-describedby="rate-error"
           className="w-full"
         />
-        {validationErrors.rate && (
-          <p id="rate-error" className="text-red-600 text-sm mt-1">
-            {validationErrors.rate}
-          </p>
-        )}
 
         <div className="flex space-x-4 items-end">
           <div className="flex-1">
@@ -248,14 +235,8 @@ const LoanCalculator = () => {
               min="0"
               step="1"
               error={validationErrors.term}
-              aria-describedby="term-error"
               className="w-full"
             />
-            {validationErrors.term && (
-              <p id="term-error" className="text-red-600 text-sm mt-1">
-                {validationErrors.term}
-              </p>
-            )}
           </div>
 
           <div className="w-36">
@@ -272,6 +253,16 @@ const LoanCalculator = () => {
             />
           </div>
         </div>
+
+        <InputField
+          label="Start Date"
+          id="start-date"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          error={validationErrors.startDate}
+          className="w-full"
+        />
 
         <SelectField
           label="Repayment Frequency"
@@ -299,21 +290,14 @@ const LoanCalculator = () => {
             { value: 'business', label: 'Business Loan' },
           ]}
           error={validationErrors.product}
-          aria-describedby="product-error"
           className="w-full"
         />
-        {validationErrors.product && (
-          <p id="product-error" className="text-red-600 text-sm mt-1">
-            {validationErrors.product}
-          </p>
-        )}
 
         <div className="flex space-x-3">
           <button
             type="submit"
             disabled={!isFormValid()}
-            className={`flex-1 py-2 rounded-md font-semibold text-white transition-colors
-              ${isFormValid() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-300 cursor-not-allowed'}`}
+            className={`flex-1 py-2 rounded-md font-semibold text-white transition-colors ${isFormValid() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-300 cursor-not-allowed'}`}
           >
             Calculate
           </button>
@@ -329,18 +313,15 @@ const LoanCalculator = () => {
       </form>
 
       {result && (
-        <div
-          className="mt-8 p-5 bg-blue-50 border border-blue-300 rounded-md"
-          aria-live="polite"
-          role="region"
-        >
+        <div className="mt-8 p-5 bg-blue-50 border border-blue-300 rounded-md" aria-live="polite" role="region">
           <h3 className="text-lg font-bold text-blue-700 mb-3">Result</h3>
           <p className="mb-1">Interest: <span className="font-semibold">{result.interest} birr</span></p>
           <p className="mb-1">Total Repayment: <span className="font-semibold">{result.totalRepayment} birr</span></p>
           <p className="mb-1">Number of Payments: <span className="font-semibold">{result.payments}</span></p>
-          <p>Each Payment: <span className="font-semibold">{result.perPayment} birr</span></p>
+          <p className="mb-1">Each Payment: <span className="font-semibold">{result.perPayment} birr</span></p>
+          <p className="mb-1">Start Date: <span className="font-semibold">{result.startDate}</span></p>
+          <p className="mb-1">End Date: <span className="font-semibold">{result.endDate}</span></p>
 
-          {/* Amortization Schedule Table */}
           {schedule.length > 0 && (
             <div className="mt-4 flex justify-center">
               <button
@@ -349,7 +330,6 @@ const LoanCalculator = () => {
               >
                 View Full Amortization Schedule
               </button>
-
             </div>
           )}
         </div>
