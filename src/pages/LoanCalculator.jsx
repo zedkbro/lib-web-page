@@ -12,7 +12,6 @@ const LoanCalculator = () => {
   const [term, setTerm] = useState('');
   const [termUnit, setTermUnit] = useState('years');
   const [repaymentFreq, setRepaymentFreq] = useState('monthly');
-  const [product, setProduct] = useState('');
   const [startDate, setStartDate] = useState('');
   const [result, setResult] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
@@ -55,9 +54,6 @@ const LoanCalculator = () => {
     if (!term || parseInt(term) <= 0) {
       errors.term = 'Term must be a positive number.';
     }
-    if (!product) {
-      errors.product = 'Please select a product.';
-    }
     if (!startDate) {
       errors.startDate = 'Start date is required.';
     }
@@ -69,7 +65,7 @@ const LoanCalculator = () => {
       amount && parseFloat(amount) > 0 &&
       rate && parseFloat(rate) > 0 &&
       term && parseInt(term) > 0 &&
-      product && startDate
+      startDate
     );
   };
 
@@ -157,7 +153,6 @@ const LoanCalculator = () => {
     const payments = calculateRepayments(days);
     const interest = (principal * interestRate * days) / (100 * 365);
     const totalRepayment = principal + interest;
-    // const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq);
     const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq, startDate);
 
     const perPayment = amortSchedule.length > 0 ? amortSchedule[0].paymentAmount : 0;
@@ -181,7 +176,6 @@ const LoanCalculator = () => {
     setTerm('');
     setTermUnit('years');
     setRepaymentFreq('monthly');
-    setProduct('');
     setStartDate('');
     setResult(null);
     setValidationErrors({});
@@ -274,21 +268,6 @@ const LoanCalculator = () => {
             { value: 'monthly', label: 'Monthly' },
             { value: 'yearly', label: 'Yearly' },
           ]}
-          className="w-full"
-        />
-
-        <SelectField
-          label="Product"
-          id="product"
-          value={product}
-          onChange={(e) => setProduct(e.target.value)}
-          options={[
-            { value: '', label: '-- Select Product --' },
-            { value: 'personal', label: 'Personal Loan' },
-            { value: 'auto', label: 'Auto Loan' },
-            { value: 'business', label: 'Business Loan' },
-          ]}
-          error={validationErrors.product}
           className="w-full"
         />
 

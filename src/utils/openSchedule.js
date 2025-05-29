@@ -21,8 +21,8 @@ export function openSchedulePDF(schedule) {
   // Map schedule rows including new fields
   const tableRows = schedule.map(row => [
     row.paymentNumber,
-    row.payDate, // ensure this exists in schedule objects
-    formatNumber(row.beginningBalance), // ensure this exists
+    row.payDate,
+    formatNumber(row.beginningBalance),
     formatNumber(row.paymentAmount),
     formatNumber(row.principalPayment),
     formatNumber(row.interestPayment),
@@ -48,8 +48,8 @@ export function openSchedulePDF(schedule) {
       fillColor: [245, 245, 245],
     },
     columnStyles: {
-      1: { halign: 'center' }, // Pay Date center align
-      0: { halign: 'center' }, // Payment # center align
+      1: { halign: 'center' },
+      0: { halign: 'center' },
     },
   });
 
