@@ -305,7 +305,8 @@ export default function ForeignExchange() {
               <div className="max-sm:w-[40%]">
                 <h1 className="text-gray-700">To</h1>
                 <select
-                  defaultValue="ETB"
+                  value={toCurrency}
+                  onChange={handleToChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
                 >
                   <option value="ETB">ETB</option>
