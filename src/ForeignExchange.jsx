@@ -51,7 +51,7 @@ export default function ForeignExchange() {
   };
 
   const fetchDataFromLocalServer = async () => {
-    const url = "http://10.1.10.90:9191/api/forex/all";
+    const url = "https://10.1.10.90:9191/api/forex/all";
     try {
       const response = await axios.get(url);
       if (response.data && response.data.length > 0) {
