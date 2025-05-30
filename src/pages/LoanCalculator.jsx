@@ -205,8 +205,8 @@ const LoanCalculator = () => {
             <div className="mt-4 flex justify-center">
               <div
                 onClick={() => openSchedulePDF(schedule)}
-                className="px-4 py-2 bg-[#00a8ec] text-white rounded hover:bg-[#0091d1] text-center cursor-pointer select-none"
-                role="button"
+                className="px-4 py-2 text-[#00a8ec] rounded hover:text-[#0091d1] underline text-center cursor-pointer select-none"
+                // role="button"
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openSchedulePDF(schedule)}
               >
