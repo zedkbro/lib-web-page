@@ -42,14 +42,20 @@ const LoanCalculator = () => {
 
     const principal = parseFloat(amount);
     const interestRate = parseFloat(rate);
-    const days = calculateDays(term, termUnit);
-    const payments = calculateRepayments(days, repaymentFreq);
+    const days = calculateDays(term, termUnit); // ✅ RESTORE THIS
+    const payments = calculateRepayments(term, termUnit, repaymentFreq, startDate); // ✅ Already correct
 
-    // Simple interest for total interest
-    const interest = (principal * interestRate * days) / (100 * 365);
+    const interest = (principal * interestRate * days) / (100 * 365); // ✅ now "days" is defined
     const totalRepayment = principal + interest;
 
-    const amortSchedule = generateAmortizationSchedule(principal, interestRate, payments, repaymentFreq, startDate);
+    const amortSchedule = generateAmortizationSchedule(
+      principal,
+      interestRate,
+      payments,
+      repaymentFreq,
+      startDate
+    );
+
     const perPayment = amortSchedule.length > 0 ? amortSchedule[0].paymentAmount : 0;
     const endDate = calculateEndDate(startDate, term, termUnit);
 
