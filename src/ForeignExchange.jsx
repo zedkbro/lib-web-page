@@ -3,8 +3,9 @@ import logo from "./image/logo.jpeg";
 import usa_flag from "./image/usa_flag.webp";
 import british_flag from "./image/british_flag.png";
 import euro_flag from "./image/euro_flag.png";
+import axios from "axios";
 export default function ForeignExchange() {
-  const [fx_rates, setExchangeRates] = useState([]);
+  const [fx_rates, setExchangeRates] = useState([]); // initialize exchange rates
   const [fromCurrency, setFromCurrency] = useState("");
   const [toCurrency, setToCurrency] = useState("ETB");
   const [price, setRate] = useState(0);
@@ -15,28 +16,70 @@ export default function ForeignExchange() {
   const [error, setError] = useState("");
   const [date, setDate] = useState("");
   //  fetch from API
-  const fetchData = async () => {
-    const targetUrl = "https://api-in-uat.anbesabank.et/forex/2.0.0/rates";
-    const proxyUrl =
-      "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl);
-
+  const fetchDataFromWso2 = async () => {
+    const url = "https://api-in-uat.anbesabank.et/forex/2.0.0/rates";
     try {
-      const response = await fetch(proxyUrl);
-      const data = await response.json(); // Parse the allOrigins response as JSON
-      const parsedData = JSON.parse(data.contents); // Parse the 'contents' field as JSON array
-
-      if (Array.isArray(parsedData) && parsedData.length > 0) {
-        setExchangeRates(parsedData);
+      const response = await axios.get(url);
+      if (response.data && response.data.length > 0) {
+        setExchangeRates(response.data);
         setError("");
       } else {
         setError("No exchange rates found");
       }
     } catch (error) {
-      console.error("Error fetching exchange rates:", error);
-      setError("Failed to fetch exchange rates");
+      if (axios.isAxiosError(error)) {
+        if (
+          error.code === "ERR_NETWORK" ||
+          error.code === "ERR_BAD_RESPONSE" ||
+          error.response?.status === 403
+        ) {
+          fetchDataFromLocalServer();
+          return;
+          // setError("Network error! The server might be down or unreachable.");
+        } else if (error.response?.status === 403) {
+          // this should not be reachable because the API mustn't has authorization issue
+          setError(
+            "Access denied: You are not authorized to access this resource."
+          );
+        } else {
+          setError(`Axios error: ${error.message}`);
+        }
+      } else {
+        setError("Something went wrong!");
+      }
     }
   };
 
+  const fetchDataFromLocalServer = async () => {
+    const url = "http://10.1.10.90:9191/api/forex/all";
+    try {
+      const response = await axios.get(url);
+      if (response.data && response.data.length > 0) {
+        setExchangeRates(response.data);
+        setError("");
+      } else {
+        setError("No exchange rates found");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (
+          error.code === "ERR_NETWORK" ||
+          error.code === "ERR_BAD_RESPONSE"  
+        ) {
+             setError("Network error! The server might be down or unreachable.");
+        } else if (error.response?.status === 403) {
+          // this should not be reachable because the API mustn't has authorization issue
+          setError(
+            "Access denied: You are not authorized to access this resource."
+          );
+        } else {
+          setError(`Axios error: ${error.message}`);
+        }
+      } else {
+        setError("Something went wrong!");
+      }
+    }
+  };
   useEffect(() => {
     const today = new Date();
     setDate(
@@ -46,7 +89,7 @@ export default function ForeignExchange() {
         day: "numeric",
       })
     );
-    fetchData();
+    fetchDataFromWso2();
   }, []);
   // Recalculate when amount or currency changes
   useEffect(() => {
@@ -147,8 +190,11 @@ export default function ForeignExchange() {
         </p>
         <h1 className="text-red-500">{error}</h1>
         <button
-          onClick={(e)=>{e.preventDefault(); fetchData();}}
-          className=" border bg-white  px-4 py-1 rounded-md"
+          onClick={(e) => {
+            e.preventDefault();
+            fetchData();
+          }}
+          className=" border bg-white  px-4 py-1 rounded-md shadow-md"
         >
           Retry
         </button>
@@ -259,7 +305,7 @@ export default function ForeignExchange() {
               <div className="max-sm:w-[40%]">
                 <h1 className="text-gray-700">To</h1>
                 <select
-                  defaultValue="ETB" 
+                  defaultValue="ETB"
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white browser-default"
                 >
                   <option value="ETB">ETB</option>
