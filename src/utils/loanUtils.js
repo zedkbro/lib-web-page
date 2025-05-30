@@ -1,3 +1,5 @@
+import { parseISO, addYears, addMonths, addDays, differenceInMonths, differenceInWeeks, differenceInDays } from 'date-fns';
+
 export const calculateDays = (term, termUnit) => {
   const t = parseInt(term, 10);
   switch (termUnit) {
@@ -8,13 +10,29 @@ export const calculateDays = (term, termUnit) => {
   }
 };
 
-export const calculateRepayments = (days, repaymentFreq) => {
+export const calculateRepayments = (term, termUnit, repaymentFreq, startDate) => {
+  const start = parseISO(startDate);
+  let end;
+
+  const t = parseInt(term, 10);
+  switch (termUnit) {
+    case 'years': end = addYears(start, t); break;
+    case 'months': end = addMonths(start, t); break;
+    case 'days': end = addDays(start, t); break;
+    default: return 0;
+  }
+
   switch (repaymentFreq) {
-    case 'daily': return days;
-    case 'weekly': return Math.ceil(days / 7);
-    case 'monthly': return Math.ceil(days / 30);
-    case 'yearly': return Math.ceil(days / 365);
-    default: return 1;
+    case 'monthly':
+      return differenceInMonths(end, start);
+    case 'weekly':
+      return differenceInWeeks(end, start);
+    case 'daily':
+      return differenceInDays(end, start);
+    case 'yearly':
+      return t;
+    default:
+      return 0;
   }
 };
 
