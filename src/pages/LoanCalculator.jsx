@@ -42,10 +42,10 @@ const LoanCalculator = () => {
 
     const principal = parseFloat(amount);
     const interestRate = parseFloat(rate);
-    const days = calculateDays(term, termUnit); // ✅ RESTORE THIS
-    const payments = calculateRepayments(term, termUnit, repaymentFreq, startDate); // ✅ Already correct
+    const days = calculateDays(term, termUnit);
+    const payments = calculateRepayments(term, termUnit, repaymentFreq, startDate);
 
-    const interest = (principal * interestRate * days) / (100 * 365); // ✅ now "days" is defined
+    const interest = (principal * interestRate * days) / (100 * 365);
     const totalRepayment = principal + interest;
 
     const amortSchedule = generateAmortizationSchedule(
@@ -90,7 +90,7 @@ const LoanCalculator = () => {
 
   return (
     <div className="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-lg font-sans text-gray-800">
-      <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">
+      <h2 className="text-2xl font-bold text-[#00a8ec] mb-6 text-center">
         Loan Interest Calculator
       </h2>
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
@@ -176,7 +176,7 @@ const LoanCalculator = () => {
           <button
             type="submit"
             disabled={!isFormValid()}
-            className={`flex-1 py-2 rounded-md font-semibold text-white transition-colors ${isFormValid() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-300 cursor-not-allowed'}`}
+            className={`flex-1 py-2 rounded-md font-semibold text-white transition-colors ${isFormValid() ? 'bg-[#00a8ec] hover:bg-[#0091d1]' : 'bg-blue-300 cursor-not-allowed'}`}
           >
             Calculate
           </button>
@@ -184,7 +184,7 @@ const LoanCalculator = () => {
           <button
             type="button"
             onClick={handleReset}
-            className="flex-1 py-2 rounded-md border border-gray-300 text-gray-700 hover:border-blue-600 hover:text-blue-600 transition-colors font-semibold"
+            className="flex-1 py-2 rounded-md border border-gray-300 text-gray-700 hover:border-[#00a8ec] hover:text-[#00a8ec] transition-colors font-semibold"
           >
             Reset
           </button>
@@ -192,8 +192,8 @@ const LoanCalculator = () => {
       </form>
 
       {result && (
-        <div className="mt-8 p-5 bg-blue-50 border border-blue-300 rounded-md" aria-live="polite" role="region">
-          <h3 className="text-lg font-bold text-blue-700 mb-3">Result</h3>
+        <div className="mt-8 p-5 bg-[#e0f7ff] border border-[#b3eaff] rounded-md" aria-live="polite" role="region">
+          <h3 className="text-lg font-bold text-[#0091d1] mb-3">Result</h3>
           <p className="mb-1">Interest: <span className="font-semibold">{result.interest} birr</span></p>
           <p className="mb-1">Total Repayment: <span className="font-semibold">{result.totalRepayment} birr</span></p>
           <p className="mb-1">Number of Payments: <span className="font-semibold">{result.payments}</span></p>
@@ -203,12 +203,15 @@ const LoanCalculator = () => {
 
           {schedule.length > 0 && (
             <div className="mt-4 flex justify-center">
-              <button
+              <div
                 onClick={() => openSchedulePDF(schedule)}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 bg-[#00a8ec] text-white rounded hover:bg-[#0091d1] text-center cursor-pointer select-none"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openSchedulePDF(schedule)}
               >
                 View Full Amortization Schedule
-              </button>
+              </div>
             </div>
           )}
         </div>
