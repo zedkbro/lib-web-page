@@ -17,7 +17,7 @@ export default function ForeignExchange() {
   const [date, setDate] = useState("");
   //  fetch from API
   const fetchDataFromWso2 = async () => {
-    const url = "https://api-in-uat.anbesabank.et/forex/2.0.0/rates";
+    const url = "https://api-in-uat.anbesabank.et/forex2/2.0.0/rates";
     try {
       const response = await axios.get(url);
       if (response.data && response.data.length > 0) {
@@ -34,7 +34,7 @@ export default function ForeignExchange() {
           error.response?.status === 403
         ) {
           fetchDataFromLocalServer();
-          return;
+          // return;
           // setError("Network error! The server might be down or unreachable.");
         } else if (error.response?.status === 403) {
           // this should not be reachable because the API mustn't has authorization issue
