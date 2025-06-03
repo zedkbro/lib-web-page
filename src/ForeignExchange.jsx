@@ -15,6 +15,7 @@ export default function ForeignExchange() {
   const [isConverted, setIsConverted] = useState(false);
   const [error, setError] = useState("");
   const [date, setDate] = useState("");
+
   //  fetch from API
   const fetchDataFromWso2 = async () => {
     const url = "https://api-in-uat.anbesabank.et/forex2/2.0.0/rates";
@@ -50,8 +51,8 @@ export default function ForeignExchange() {
     }
   };
 
-  const fetchDataFromLocalServer = async () => {
-    const url = "https://10.1.10.90:9191/api/forex/all";
+  const fetchDataFromForexServer = async () => {
+    const url = "https://forex.anbesabank.et/api/daily";
     try {
       const response = await axios.get(url);
       if (response.data && response.data.length > 0) {
@@ -62,11 +63,8 @@ export default function ForeignExchange() {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (
-          error.code === "ERR_NETWORK" ||
-          error.code === "ERR_BAD_RESPONSE"  
-        ) {
-             setError("Network error! The server might be down or unreachable.");
+        if (error.code === "ERR_NETWORK" || error.code === "ERR_BAD_RESPONSE") {
+          setError("Network error! The server might be down or unreachable.");
         } else if (error.response?.status === 403) {
           // this should not be reachable because the API mustn't has authorization issue
           setError(
@@ -89,7 +87,7 @@ export default function ForeignExchange() {
         day: "numeric",
       })
     );
-    fetchDataFromWso2();
+    fetchDataFromForexServer();
   }, []);
   // Recalculate when amount or currency changes
   useEffect(() => {
@@ -363,32 +361,6 @@ export default function ForeignExchange() {
               className="w-full border border-gray-400 rounded-lg px-4 py-2"
             />
           </div>
-
-          {/* <button
-          onClick={() => {
-            if (amount && parseFloat(amount) > 0 && fromCurrency && price) {
-              if (currentConversion === "Buying") {
-                const result = parseFloat(amount) * price;
-                setConvertedAmount(result.toFixed(2));
-                setIsConverted(true);
-                return;
-              }
-              const result = parseFloat(amount) / price;
-              setConvertedAmount(result.toFixed(2));
-              setIsConverted(true);
-            }
-          }}
-          disabled={
-            !amount || parseFloat(amount) <= 0 || !fromCurrency || !price
-          }
-          className={`w-full md:w-auto px-6 py-2 rounded-xl text-white 
-    ${!amount || parseFloat(amount) <= 0 || !fromCurrency || !price
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#009FD6] hover:bg-[#007FB3] cursor-pointer"
-            }`}
-        >
-          Calculate
-        </button> */}
         </div>
       </section>
       {/* Conversion Result */}
