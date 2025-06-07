@@ -1,4 +1,12 @@
-import { parseISO, addYears, addMonths, addDays, differenceInMonths, differenceInWeeks, differenceInDays } from 'date-fns';
+import {
+  parseISO,
+  addYears,
+  addMonths,
+  addDays,
+  differenceInMonths,
+  differenceInWeeks,
+  differenceInDays,
+} from 'date-fns';
 
 export const calculateDays = (term, termUnit) => {
   const t = parseInt(term, 10);
@@ -13,8 +21,8 @@ export const calculateDays = (term, termUnit) => {
 export const calculateRepayments = (term, termUnit, repaymentFreq, startDate) => {
   const start = parseISO(startDate);
   let end;
-
   const t = parseInt(term, 10);
+
   switch (termUnit) {
     case 'years': end = addYears(start, t); break;
     case 'months': end = addMonths(start, t); break;
@@ -25,6 +33,8 @@ export const calculateRepayments = (term, termUnit, repaymentFreq, startDate) =>
   switch (repaymentFreq) {
     case 'monthly':
       return differenceInMonths(end, start);
+    case 'quarterly':
+      return Math.floor(differenceInMonths(end, start) / 3);
     case 'weekly':
       return differenceInWeeks(end, start);
     case 'daily':
@@ -69,6 +79,10 @@ export const generateAmortizationSchedule = (
     case 'monthly':
       periodInterestRate = (annualInterestRate / 100) / 12;
       intervalDays = 30;
+      break;
+    case 'quarterly':
+      periodInterestRate = (annualInterestRate / 100) / 4;
+      intervalDays = 91; // Approx. 3 months
       break;
     case 'yearly':
       periodInterestRate = (annualInterestRate / 100);
