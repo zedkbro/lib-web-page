@@ -18,7 +18,7 @@ export default function ForeignExchange() {
 
   //  fetch from API
   const fetchDataFromWso2 = async () => {
-    const url = "https://api-in-uat.anbesabank.et/forex2/2.0.0/rates";
+    const url = "https://api-in-uat.anbesabank.et/forex3/1.0.0/rates";
     try {
       const response = await axios.get(url);
       if (response.data && response.data.length > 0) {
@@ -34,7 +34,7 @@ export default function ForeignExchange() {
           error.code === "ERR_BAD_RESPONSE" ||
           error.response?.status === 403
         ) {
-          fetchDataFromLocalServer();
+          // fetchDataFromLocalServer();
           // return;
           // setError("Network error! The server might be down or unreachable.");
         } else if (error.response?.status === 403) {
@@ -87,7 +87,7 @@ export default function ForeignExchange() {
         day: "numeric",
       })
     );
-    fetchDataFromForexServer();
+    fetchDataFromWso2();
   }, []);
   // Recalculate when amount or currency changes
   useEffect(() => {
