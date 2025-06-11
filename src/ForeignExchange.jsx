@@ -18,7 +18,7 @@ export default function ForeignExchange() {
 
   //  fetch from API
   const fetchDataFromWso2 = async () => {
-    const url = "https://api-in-uat.anbesabank.et/forex3/1.0.0/rates";
+    const url = "https://forex.anbesabank.et/api/daily";
     try {
       const response = await axios.get(url);
       if (response.data && response.data.length > 0) {
@@ -235,8 +235,8 @@ export default function ForeignExchange() {
                         rate.currencyCode === "USD"
                           ? usa_flag
                           : rate.currencyCode === "GBP"
-                          ? british_flag
-                          : euro_flag
+                            ? british_flag
+                            : euro_flag
                       }
                       alt=""
                       className="size-8 rounded-full object-center object-cover "
@@ -248,10 +248,10 @@ export default function ForeignExchange() {
                       {rate.currencyCode === "USD"
                         ? "US Dollar"
                         : rate.currencyCode === "EUR"
-                        ? "Euro"
-                        : rate.currencyCode === "GBP"
-                        ? "British Pound"
-                        : ""}
+                          ? "Euro"
+                          : rate.currencyCode === "GBP"
+                            ? "British Pound"
+                            : ""}
                     </div>
                   </div>
                 </td>
@@ -266,7 +266,7 @@ export default function ForeignExchange() {
       {/* Conversion Form */}
       <section>
         <h1
-          className="w-full md:w-[85%] lg:w-[60%] mx-auto   mb-2 text-center font-bold bg-gradient-to-r 
+          className="w-full md:w-[85%] lg:w-[60%] mx-auto   mb-2 text-center font-bold bg-gradient-to-r
         from-black to-[#009FD6] bg-clip-text text-transparent"
         >
           Calculate
