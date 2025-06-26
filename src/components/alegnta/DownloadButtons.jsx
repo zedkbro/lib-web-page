@@ -30,7 +30,7 @@ const DownloadButtons = () => {
 
           {/* App Store Button */}
           <a
-            href="https://apps.apple.com/app/idXXXXXXXXXX"
+            href="https://apps.apple.com/us/app/lib-alegnta/id6746380657"
             target="_blank"
             rel="noopener noreferrer"
           >
