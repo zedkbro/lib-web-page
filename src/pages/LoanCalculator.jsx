@@ -217,6 +217,7 @@ const LoanCalculator = () => {
             )}
           </div>
         )}
+        
       </div>
     </div>
   );
