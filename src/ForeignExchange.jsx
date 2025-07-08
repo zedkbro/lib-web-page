@@ -18,9 +18,11 @@ export default function ForeignExchange() {
 
   //  fetch from API
   const fetchDataFromWso2 = async () => {
-    const url = "https://forex.anbesabank.et/api/daily";
+    // const url = "https://forex.anbesabank.et/api/daily";
+    const url = "https://api-in-uat.anbesabank.et/forex4/4.0.0/rates";
     try {
       const response = await axios.get(url);
+      
       if (response.data && response.data.length > 0) {
         setExchangeRates(response.data);
         setError("");
@@ -28,42 +30,18 @@ export default function ForeignExchange() {
         setError("No exchange rates found");
       }
     } catch (error) {
+      
       if (axios.isAxiosError(error)) {
         if (
-          error.code === "ERR_NETWORK" ||
-          error.code === "ERR_BAD_RESPONSE" ||
-          error.response?.status === 403
+          error.response?.status === 403 &&
+          error.response?.data === "Invalid CORS request"
         ) {
+          setError("Access denied: This request is not allowed by the server.");
+          return;
+        }
+        if (error.code === "ERR_NETWORK" || error.code === "ERR_BAD_RESPONSE") {
           // fetchDataFromLocalServer();
           // return;
-          // setError("Network error! The server might be down or unreachable.");
-        } else if (error.response?.status === 403) {
-          // this should not be reachable because the API mustn't has authorization issue
-          setError(
-            "Access denied: You are not authorized to access this resource."
-          );
-        } else {
-          setError(`Axios error: ${error.message}`);
-        }
-      } else {
-        setError("Something went wrong!");
-      }
-    }
-  };
-
-  const fetchDataFromForexServer = async () => {
-    const url = "https://forex.anbesabank.et/api/daily";
-    try {
-      const response = await axios.get(url);
-      if (response.data && response.data.length > 0) {
-        setExchangeRates(response.data);
-        setError("");
-      } else {
-        setError("No exchange rates found");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.code === "ERR_NETWORK" || error.code === "ERR_BAD_RESPONSE") {
           setError("Network error! The server might be down or unreachable.");
         } else if (error.response?.status === 403) {
           // this should not be reachable because the API mustn't has authorization issue
@@ -78,6 +56,34 @@ export default function ForeignExchange() {
       }
     }
   };
+
+  // const fetchDataFromForexServer = async () => {
+  //   const url = "https://forex.anbesabank.et/api/daily";
+  //   try {
+  //     const response = await axios.get(url);
+  //     if (response.data && response.data.length > 0) {
+  //       setExchangeRates(response.data);
+  //       setError("");
+  //     } else {
+  //       setError("No exchange rates found");
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       if (error.code === "ERR_NETWORK" || error.code === "ERR_BAD_RESPONSE") {
+  //         setError("Network error! The server might be down or unreachable.");
+  //       } else if (error.response?.status === 403) {
+  //         // this should not be reachable because the API mustn't has authorization issue
+  //         setError(
+  //           "Access denied: You are not authorized to access this resource."
+  //         );
+  //       } else {
+  //         setError(`Axios error: ${error.message}`);
+  //       }
+  //     } else {
+  //       setError("Something went wrong!");
+  //     }
+  //   }
+  // };
   useEffect(() => {
     const today = new Date();
     setDate(
