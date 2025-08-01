@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import logo from "./image/logo.jpeg";
-import usa_flag from "./image/usa_flag.webp";
-import british_flag from "./image/british_flag.png";
-import euro_flag from "./image/euro_flag.png";
+import logo from "../image/logo.jpeg";
+import usa_flag from "../image/usa_flag.webp";
+import british_flag from "../image/british_flag.png";
+import euro_flag from "../image/euro_flag.png";
 import axios from "axios";
 export default function ForeignExchange() {
   const [fx_rates, setExchangeRates] = useState([]); // initialize exchange rates
@@ -19,10 +19,9 @@ export default function ForeignExchange() {
   //  fetch from API
   const fetchDataFromWso2 = async () => {
     // const url = "https://forex.anbesabank.et/api/daily";
-    const url = "https://api-in-uat.anbesabank.et/forex4/4.0.0/rates";
+    const url = "https://api-in-uat.anbesabank.et/api/forex/1.0.0/rates";
     try {
       const response = await axios.get(url);
-      
       if (response.data && response.data.length > 0) {
         setExchangeRates(response.data);
         setError("");
@@ -30,7 +29,6 @@ export default function ForeignExchange() {
         setError("No exchange rates found");
       }
     } catch (error) {
-      
       if (axios.isAxiosError(error)) {
         if (
           error.response?.status === 403 &&
