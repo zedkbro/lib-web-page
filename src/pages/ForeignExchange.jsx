@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import logo from "./image/logo.jpeg";
-import usa_flag from "./image/usa_flag.webp";
-import british_flag from "./image/british_flag.png";
-import euro_flag from "./image/euro_flag.png";
+import logo from "../image/logo.jpeg";
+import usa_flag from "../image/usa_flag.webp";
+import british_flag from "../image/british_flag.png";
+import euro_flag from "../image/euro_flag.png";
 import axios from "axios";
 export default function ForeignExchange() {
   const [fx_rates, setExchangeRates] = useState([]); // initialize exchange rates
@@ -18,7 +18,11 @@ export default function ForeignExchange() {
 
   //  fetch from API
   const fetchDataFromWso2 = async () => {
-    const url = "https://forex.anbesabank.et/api/daily";
+    // <<<<<<< HEAD:src/ForeignExchange.jsx
+    //     const url = "https://forex.anbesabank.et/api/daily";
+    // =======
+    // const url = "https://forex.anbesabank.et/api/daily";
+    const url = "https://api-in-uat.anbesabank.et/api/forex/1.0.0/rates";
     try {
       const response = await axios.get(url);
       if (response.data && response.data.length > 0) {
@@ -30,40 +34,15 @@ export default function ForeignExchange() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (
-          error.code === "ERR_NETWORK" ||
-          error.code === "ERR_BAD_RESPONSE" ||
-          error.response?.status === 403
+          error.response?.status === 403 &&
+          error.response?.data === "Invalid CORS request"
         ) {
+          setError("Access denied: This request is not allowed by the server.");
+          return;
+        }
+        if (error.code === "ERR_NETWORK" || error.code === "ERR_BAD_RESPONSE") {
           // fetchDataFromLocalServer();
           // return;
-          // setError("Network error! The server might be down or unreachable.");
-        } else if (error.response?.status === 403) {
-          // this should not be reachable because the API mustn't has authorization issue
-          setError(
-            "Access denied: You are not authorized to access this resource."
-          );
-        } else {
-          setError(`Axios error: ${error.message}`);
-        }
-      } else {
-        setError("Something went wrong!");
-      }
-    }
-  };
-
-  const fetchDataFromForexServer = async () => {
-    const url = "https://forex.anbesabank.et/api/daily";
-    try {
-      const response = await axios.get(url);
-      if (response.data && response.data.length > 0) {
-        setExchangeRates(response.data);
-        setError("");
-      } else {
-        setError("No exchange rates found");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.code === "ERR_NETWORK" || error.code === "ERR_BAD_RESPONSE") {
           setError("Network error! The server might be down or unreachable.");
         } else if (error.response?.status === 403) {
           // this should not be reachable because the API mustn't has authorization issue
@@ -78,6 +57,34 @@ export default function ForeignExchange() {
       }
     }
   };
+
+  // const fetchDataFromForexServer = async () => {
+  //   const url = "https://forex.anbesabank.et/api/daily";
+  //   try {
+  //     const response = await axios.get(url);
+  //     if (response.data && response.data.length > 0) {
+  //       setExchangeRates(response.data);
+  //       setError("");
+  //     } else {
+  //       setError("No exchange rates found");
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       if (error.code === "ERR_NETWORK" || error.code === "ERR_BAD_RESPONSE") {
+  //         setError("Network error! The server might be down or unreachable.");
+  //       } else if (error.response?.status === 403) {
+  //         // this should not be reachable because the API mustn't has authorization issue
+  //         setError(
+  //           "Access denied: You are not authorized to access this resource."
+  //         );
+  //       } else {
+  //         setError(`Axios error: ${error.message}`);
+  //       }
+  //     } else {
+  //       setError("Something went wrong!");
+  //     }
+  //   }
+  // };
   useEffect(() => {
     const today = new Date();
     setDate(
