@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - APP_VERSION=3.0.0 # Version as build argument
+    image: react-app:v3.0.0 # Explicit image tag
     container_name: react-app
     ports:
       - "8082:80"
